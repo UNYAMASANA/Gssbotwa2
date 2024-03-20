@@ -22,11 +22,11 @@ global.APIs = {
 
 // Other
 global.apikey = 'bf2d2cf29b3edc604b447983';
-global.ownername = '𝑆𝛪𝐷 𝐵𝛨𝛥𝛪';
-global.owner = ['917050906659'];
-global.premium = ['917050906659'];
+global.ownername = 'MOALLY';
+global.owner = ['255615495137'];
+global.premium = ['255615495137'];
 global.packname = '𝚜𝚝𝚒𝚌𝚔𝚎𝚛 𝚋𝚢';
-global.author = '𝐆𝐒𝐒 𝚩𝚯𝚻𝐖𝚫';
+global.author = 'MO_ALLY';
 global.sessionName = 'session';
 global.prefa = ['', '!', '.'];
 global.sp = '✪';
@@ -34,10 +34,10 @@ global.mess = {
     banned: '`You are *Banned* fron using commands!`',
     bangc: '`This Group is *Banned* from using Commands!`',
     success: '`✓ Success`',
-    admin: '`This feature is only for group admins`',
-    botAdmin: '`I am not an admin!`',
-    owner: '`You are not my owner`',
-    group: '`You can use this command only in groups ❌`',
+    admin: '`hiki kitu ni cha moally usi type tena`',
+    botAdmin: '`mimi sio admin!`',
+    owner: '`wewe sio kiongozi wangu`',
+    group: '`command hii inatumika katika group  ❌`',
     private: '`Feature is used only for private chats!`',
     bot: '`Bot number user special features`',
     wait: '*Processing Your request*',

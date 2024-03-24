@@ -56,7 +56,7 @@ const acr = new acrcloud({
     access_key: 'c33c767d683f78bd17d4bd4991955d81',
     access_secret: 'bvgaIAEtADBTbLwiPGYlxupWqkNGIjT7J9Ag2vIu'
 });
-const apiKey = "AIzaSyANBCTOmcHkrA15S5e2lyNMbZzmiJRn1iA";
+const apiKey = "AIzaSyChpx8N6gNWPOZoKCsJxbdnVbNvolEoito";
 const genAI = new GoogleGenerativeAI(apiKey);
 const tempMailAddresses = {};
 const defaultLang = 'en'
@@ -106,10 +106,14 @@ module.exports = gss = async (gss, m, chatUpdate, store) => {
         var args = body.trim().split(/ +/).slice(1)
         args = args.concat(['','','','','',''])
 
+
+
 //prefix v2
-const pric = /^#.¦|\\^/.test(body) ? body.match(/^#.¦|\\^/gi) : '.'
-        const isAsu = body.startsWith(pric)
-        const isCommand = isAsu ? body.replace(pric, '').trim().split(/ +/).shift().toLowerCase() : ""
+const pric = /^#|\^/.test(body) ? body.match(/^#|\^/gi) : '.';
+const isAsu = body.startsWith(global.prefa[0]) || body.startsWith(global.prefa[1]);
+const isCommand = isAsu ? body.replace(pric, '').trim().split(/ +/).shift().toLowerCase() : '';
+
+
         const pushname = m.pushName || "No Name"
         const botNumber = await gss.decodeJid(gss.user.id)
         const isCreator = [botNumber, ...global.owner].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net').includes(m.sender)
@@ -826,7 +830,7 @@ const cmdSearch = ["Play", "Yts", "Imdb", "Google", "Gimage", "Pinterest", "Wall
 const cmdFun = ["Delttt", "Tictactoe"];
 const cmdConv = ["Removebg", "Sticker", "Emojimix", "Tovideo", "Togif", "Tourl", "Tovn", "Tomp3", "Toaudio", "Ebinary", "dbinary", "Styletext", "Fontchange", "Fancy", "Upscale", "hd", "attp", "attp2", "attp3", "ttp", "ttp2", "ttp3", "ttp4", "ttp5", "qc"];
 const cmdMain = ["Ping", "Alive", "Owner", "Menu", "Infochat", "Quoted", "Listpc", "Listgc", "Listonline", "Infobot", "Buypremium"];
-const cmdOwner = ["React", "Chat", "Join", "Leave", "Block", "Unblock", "Bcgroup", "Bcall", "Setppbot", "Setexif", "Anticall", "Setstatus", "Setnamebot", "Sleep", "AutoTyping", "AlwaysOnline", "AutoRead"];
+const cmdOwner = ["React", "Chat", "Join", "Leave", "Block", "Unblock", "Bcgroup", "Bcall", "Setppbot", "Setexif", "Anticall", "Setstatus", "Setnamebot", "Sleep", "AutoTyping", "AlwaysOnline", "AutoRead", "autosview", "ban", "unban", "warn", "unwarn", "banchat"];
 const cmdStalk = ["Nowa", "Truecaller", "InstaStalk", "GithubStalk"];
 
 
@@ -1582,7 +1586,7 @@ case "score":
   const matchId = encodeURIComponent(text);
 
   try {
-    const apiUrl = `https://cricket-olive.vercel.app/score?id=${matchId}`;
+    const apiUrl = `https://iol.apinepdev.workers.dev/${matchId}`;
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
@@ -1597,9 +1601,9 @@ case "score":
     formattedResult += `│⿻   *LIVE MATCH INFO* ✨\n`;
     formattedResult += `│⿻\n`;
 
-    if (result.update && result.update.toLowerCase() !== "data not found") {
-      formattedResult += `│⿻   *${result.title}*\n`;
-      formattedResult += `│⿻   *${result.update}*\n`;
+    if (result.code === 200) {
+      formattedResult += `│⿻   *${result.data.title}*\n`;
+      formattedResult += `│⿻   *${result.data.update}*\n`;
       formattedResult += `│⿻ \n`;
     } else {
       await m.reply(`*Update:* Data not found for the specified match ID.`);
@@ -1607,21 +1611,21 @@ case "score":
       return;
     }
 
-    if (result.livescore && result.livescore.toLowerCase() !== "data not found") {
-      formattedResult += `│⿻   *Live Score:* ${result.livescore}\n`;
-      formattedResult += `│⿻   *Run Rate:* ${result.runrate}\n`;
+    if (result.data.liveScore && result.data.liveScore.toLowerCase() !== "data not found") {
+      formattedResult += `│⿻   *Live Score:* ${result.data.liveScore}\n`;
+      formattedResult += `│⿻   *Run Rate:* ${result.data.runRate}\n`;
       formattedResult += `│⿻\n`;
-      formattedResult += `│⿻   *Batter 1:* ${result.batterone}\n`;
-      formattedResult += `│⿻   *${result.batsmanonerun} (${result.batsmanoneball})* SR: ${result.batsmanonesr} ${result.batsmanone === result.batterone ? "" : ""}\n`;
+      formattedResult += `│⿻   *Batter 1:* ${result.data.batsmanOne}\n`;
+      formattedResult += `│⿻   *${result.data.batsmanOneRun} (${result.data.batsmanOneBall})* SR: ${result.data.batsmanOneSR}\n`;
       formattedResult += `│⿻\n`;
-      formattedResult += `│⿻   *Batter 2:* ${result.battertwo}\n`;
-      formattedResult += `│⿻   *${result.batsmantworun} (${result.batsmantwoball})* SR: ${result.batsmantwosr} ${result.battertwo === result.battertwo ? "" : ""}\n`;
+      formattedResult += `│⿻   *Batter 2:* ${result.data.batsmanTwo}\n`;
+      formattedResult += `│⿻   *${result.data.batsmanTwoRun} (${result.data.batsmanTwoBall})* SR: ${result.data.batsmanTwoSR}\n`;
       formattedResult += `│⿻\n`;
-      formattedResult += `│⿻   *Bowler 1:* ${result.bowlerone}\n`;
-      formattedResult += `│⿻   *${result.bowleroneover} overs, ${result.bowleronerun}/${result.bowleronewickers}, Econ:* ${result.bowleroneeconomy} ${result.bowlerone === result.bowlerone ? "" : ""}\n`;
+      formattedResult += `│⿻   *Bowler 1:* ${result.data.bowlerOne}\n`;
+      formattedResult += `│⿻   *${result.data.bowlerOneOver} overs, ${result.data.bowlerOneRun}/${result.data.bowlerOneWickets}, Econ:* ${result.data.bowlerOneEconomy}\n`;
       formattedResult += `│⿻\n`;
-      formattedResult += `│⿻    *Bowler 2:* ${result.bowlertwo}\n`;
-      formattedResult += `│⿻   *${result.bowlertwoover} overs, ${result.bowlertworun}/${result.bowlertwowickers}, Econ:* ${result.bowlertwoeconomy} ${result.bowlertwo === result.bowlertwo ? "" : ""}\n`;
+      formattedResult += `│⿻   *Bowler 2:* ${result.data.bowlerTwo}\n`;
+      formattedResult += `│⿻   *${result.data.bowlerTwoOver} overs, ${result.data.bowlerTwoRun}/${result.data.bowlerTwoWicket}, Econ:* ${result.data.bowlerTwoEconomy}\n`;
     }
 
     formattedResult += `╰══•∞•═══════════════╯ `;
@@ -1634,6 +1638,7 @@ case "score":
     return m.reply(`An error occurred while processing the cricket score request. ${error.message}`);
   }
   break;
+
 
 
 
@@ -3421,13 +3426,13 @@ case 'instagram':
     break;
 
 
-
 case 'toanime':
   if (isBan) return m.reply(mess.banned);
-        if (isBanChat) return m.reply(mess.bangc);
+  if (isBanChat) return m.reply(mess.bangc);
   if (!quoted) return m.reply(`Where is the picture?`);
   if (!/image/.test(mime)) return m.reply(`Send/Reply Photos With Captions ${prefix + command}`);
 
+  m.reply(mess.wait);
   try {
     // Download the image
     const dataaa = await quoted.download();
@@ -3441,7 +3446,7 @@ case 'toanime':
       const image = await uploadImage(dataaa);
       console.log('Image uploaded successfully:', image);
 
-      // Generate anime version using Lolhuman API
+      // Generate anime version using Lolhuman API or Caliph API as a fallback
       try {
         const anime = `https://api.lolhuman.xyz/api/imagetoanime?apikey=GataDios&img=${image}`;
         await gss.sendMedia(m.chat, anime, 'error.jpg', null, m);
@@ -3465,6 +3470,8 @@ case 'toanime':
     throw `*[❗] Error downloading image: ${downloadError.message || downloadError}.*`;
   }
   break;
+
+
 
 
 case 'cry': case 'kill': case 'hug': case 'pat': case 'lick': 
@@ -4281,8 +4288,65 @@ if (isBan) throw mess.banned;
 	    }
 	    break
 	    
+	    case 'addowner': {
+  if (!isCreator) throw mess.owner; // Only allow creator to add owner(s)
+
+  const numbersToAdd = args.map(num => num.trim()); // Assuming args is an array containing phone numbers to add
+
+  if (numbersToAdd.length === 0) {
+    return m.reply('Please provide at least one phone number.');
+  }
+
+  const addedOwners = [];
+
+  numbersToAdd.forEach(num => {
+    if (!global.owner.includes(num)) {
+      global.owner.push(num);
+      addedOwners.push(num);
+    }
+  });
+
+  if (addedOwners.length > 0) {
+    m.reply(`Added ${addedOwners.length > 1 ? 'owners' : 'owner'} successfully. ${addedOwners.join(', ')} added as owner${addedOwners.length > 1 ? 's' : ''}.`);
+  } else {
+    m.reply('None of the provided phone numbers were added as owner.');
+  }
+
+  break;
+}
+
+case 'deleteowner': {
+  if (!isCreator) throw mess.owner; // Only allow creator to delete owner(s)
+
+  const numbersToDelete = args.map(num => num.trim()); // Assuming args is an array containing phone numbers to delete
+
+  if (numbersToDelete.length === 0) {
+    return m.reply('Please provide at least one phone number to delete.');
+  }
+
+  const deletedOwners = [];
+
+  numbersToDelete.forEach(num => {
+    const index = global.owner.indexOf(num);
+    if (index !== -1) {
+      global.owner.splice(index, 1);
+      deletedOwners.push(num);
+    }
+  });
+
+  if (deletedOwners.length > 0) {
+    m.reply(`Deleted ${deletedOwners.length > 1 ? 'owners' : 'owner'} successfully. ${deletedOwners.join(', ')} removed as owner${deletedOwners.length > 1 ? 's' : ''}.`);
+  } else {
+    m.reply('None of the provided phone numbers were found in the owner list.');
+  }
+
+  break;
+}
+
+
 	    
-		      case 'mode': {
+	    
+		     case 'mode': {
     if (!isCreator) throw mess.owner;
     if (isBan) throw mess.banned;
     if (isBanChat) throw mess.bangc;
@@ -4307,6 +4371,9 @@ if (isBan) throw mess.banned;
                 };
                 gss.on('poll_update', handler);
             });
+        } else {
+            gss.public = selectedMode === 'public';
+            m.reply(`Successful in Changing To ${selectedMode === 'public' ? 'Public' : 'Self'} Usage.`);
         }
     }
 }
@@ -4350,15 +4417,12 @@ case 'ping': {
   } 
 break;
 
-
-
             
             case 'owner': case 'creator': {
              
                 gss.sendContact(m.chat, global.owner, m)
             }
             break
-
 
             
 case 'getbio':  

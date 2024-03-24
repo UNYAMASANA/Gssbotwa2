@@ -86,7 +86,7 @@ async function startgss() {
     
 
 
-    gss.ev.on('messages.upsert', async chatUpdate => {
+   gss.ev.on('messages.upsert', async chatUpdate => {
         //console.log(JSON.stringify(chatUpdate, undefined, 2))
         try {
         mek = chatUpdate.messages[0]
@@ -102,7 +102,86 @@ async function startgss() {
             console.log(err)
         }
     })
-    
+
+
+
+
+
+//antidelete 
+async function handleDeletedMessage(message) {
+    try {
+        const { fromMe, id, participant } = message;
+        if (fromMe) {
+            return;
+        }
+
+        let msg = this.serializeM(this.loadMessage(id));
+        if (!msg) {
+            return;
+        }
+
+        let chat = global.db.data.chats[msg.chat] || {};
+
+        // Check if the message contains media
+        let mediaUrl = '';
+        let caption = 'Status Deleted'; // Default caption for deleted status
+
+        // Check if it's an image
+        if (msg.imageMessage) {
+            mediaUrl = await gss.downloadAndSaveMediaMessage(msg.imageMessage);
+            caption = msg.imageMessage.caption || caption; // Use image caption if available
+        }
+
+        // Check if it's a video
+        if (msg.videoMessage) {
+            mediaUrl = await gss.downloadAndSaveMediaMessage(msg.videoMessage);
+            caption = msg.videoMessage.caption || caption; // Use video caption if available
+        }
+
+        const deletedMessageNotification = `
+        ≡ Deleted Status 
+        ┌─⊷  𝘼𝙉𝙏𝙄 𝘿𝙀𝙇𝙀𝙏𝙀𝘿 𝙎𝙏𝘼𝙏𝙐𝙎 
+        ▢ *Number :* @${participant.split`@`[0]} 
+        └─────────────
+        `.trim();
+
+        await gss.sendMessage(gss.user.id, {
+            text: deletedMessageNotification,
+            media: { url: mediaUrl, caption: caption }
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+
+async function deleteUpdate(message) {
+    try {
+        const {
+            fromMe,
+            id,
+            participant
+        } = message
+        if (fromMe)
+            return
+        let msg = this.serializeM(this.loadMessage(id))
+        if (!msg)
+            return
+        let chats = global.db.data.chats[msg.chats] || {}
+       
+            await this.reply(gss.user.id, `
+            ≡ deleted a message 
+            ┌─⊷  𝘼𝙉𝙏𝙄 𝘿𝙀𝙇𝙀𝙏𝙀 
+            ▢ *Number :* @${participant.split`@`[0]} 
+            └─────────────
+            `.trim(), msg, {
+                        mentions: [participant]
+                    })
+        this.copyNForward(gss.user.id, msg, false).catch(e => console.log(e, msg))
+    } catch (e) {
+        console.error(e)
+    }
+}
 
 
 
@@ -196,7 +275,7 @@ gss.ev.on('messages.update', async chatUpdate => {
 	for (let i of kon) {
 	    list.push({
 	    	displayName: await gss.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await gss.getName(i + '@s.whatsapp.net')}\nFN:${await gss.getName(i + '@s.whatsapp.net')}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:bsid4961@gmail.com\nitem2.X-ABLabel:Email\nEND:VCARD`
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await gss.getName(i + '@s.whatsapp.net')}\nFN:${await gss.getName(i + '@s.whatsapp.net')}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Phone\nEND:VCARD`
 	    })
 	}
 	gss.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
